@@ -4,9 +4,13 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+
+
 android {
     namespace = "com.bitress.smsgateway"
     compileSdk = 34
+
+
 
     defaultConfig {
         applicationId = "com.bitress.smsgateway"
@@ -47,6 +51,7 @@ dependencies {
 
     implementation("io.objectbox:objectbox-gradle-plugin:3.7.1")
 
+    implementation("com.robertlevonyan.components:PermissionsFlow:1.2.7")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
