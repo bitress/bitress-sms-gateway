@@ -1,13 +1,13 @@
 package com.bitress.smsgateway
 
 import android.Manifest
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bitress.smsgateway.databinding.ActivityMainBinding
 import com.innfinity.permissionflow.lib.requestPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -15,6 +15,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var serviceActive = false
 
+    private val prefName = "pref"
+    private val isServerOnline = "isServerOnline"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,19 +71,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startServer() {
 
-        binding.configInfoTextView.text = "Device ID: dsakldjalkd ajkldjald \n Secret Key: dlsajdaskldjsakldjsakldjaskld"
+
+    private fun startServer() {
+        // Set isServerOnline to true in SharedPreferences
+        setServerStatus(true)
+
+        // Update UI or perform other actions with the secretKey
+        binding.configInfoTextView.text = "Device ID: dsakldjalkd ajkldjald \n Secret Key: to be added"
         binding.serverButton.text = "Stop Server"
         serviceActive = true
-
     }
 
     private fun stopServer() {
+        // Set isServerOnline to false in SharedPreferences
+        setServerStatus(false)
 
         binding.serverButton.text = "Start Server"
         serviceActive = false
         binding.configInfoTextView.text = ""
+    }
+
+    private fun setServerStatus(isOnline: Boolean) {
+        val prefs = getSharedPreferences(prefName, Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+        editor.putBoolean(isServerOnline, isOnline)
+        editor.apply()
+    }
+
+    private fun isServerOnline(): Boolean {
+        val prefs = getSharedPreferences(prefName, Context.MODE_PRIVATE)
+        return prefs.getBoolean(isServerOnline, false)
     }
 
 }
