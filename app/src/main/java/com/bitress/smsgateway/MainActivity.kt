@@ -1,10 +1,17 @@
 package com.bitress.smsgateway
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bitress.smsgateway.databinding.ActivityMainBinding
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.innfinity.permissionflow.lib.requestPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,26 +39,29 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.WAKE_LOCK,
                 Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
             ).collect { permissions ->
-                // Iterate over the permissions and check if the specific permission is granted
-                val isSendSmsGranted = permissions.any { it.permission == Manifest.permission.SEND_SMS && it.isGranted }
-
-                if (isSendSmsGranted) {
-                    // SEND_SMS permission is granted, proceed with the logic
-                    // ...
-                } else {
-                    // SEND_SMS permission is not granted, handle accordingly
-                    // ...
-                }
 
                 // Alternatively, you can check if all permissions are granted
                 val allGranted = permissions.all { it.isGranted }
                 if (allGranted) {
-                    // All permissions are granted, proceed with the logic
-                    // ...
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                            return@OnCompleteListener
+                        }
+
+                        // Get new FCM registration token
+                        val token = task.result
+
+                        // Log and toast
+                        val msg = getString(R.string.msg_token_fmt, token)
+                        Log.d(TAG, msg)
+                        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+
+                        binding.configInfoTextView.text = msg
+                        copyToClipboard(msg)
+                    })
                 } else {
                     // Not all permissions are granted, handle accordingly
                     // ...
@@ -70,6 +80,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
+
+
+    private fun copyToClipboard(text: CharSequence?) {
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("FCM Token", text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(baseContext, "Token copied to clipboard", Toast.LENGTH_SHORT).show()
+    }
+
 
 
 

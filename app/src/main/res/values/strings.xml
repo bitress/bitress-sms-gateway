@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SMS Gateway</string>
+    <string name="msg_token_fmt"><![CDATA[FCM registration Token: %s<]]></string>
 </resources>
