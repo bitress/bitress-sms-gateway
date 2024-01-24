@@ -1,4 +1,5 @@
 
+![Logo](https://raw.githubusercontent.com/bitress/bitress-sms-gateway/main/.github/banner.png)
 # Bitress Android SMS Gateway
 
 This project is still in-development.
