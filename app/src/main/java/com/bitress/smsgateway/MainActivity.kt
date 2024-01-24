@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
             if (!message.isNullOrBlank()) {
                 Log.e(TAG, message)
-                val smsSender = SmsSender(context)
+                val smsSender = SmsSender()
                 if (number != null) {
                     smsSender.sendSms(number, message)
                 }
@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                         val token = task.result
 
                         deviceToken = token
-                        copyToClipboard(token)
+
 
                         val filter = IntentFilter("com.bitress.MESSAGE_RECEIVED")
                         registerReceiver(messageReceiver, filter, RECEIVER_NOT_EXPORTED)
@@ -115,22 +115,11 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-
-    private fun copyToClipboard(text: CharSequence?) {
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("FCM Token", text)
-        clipboard.setPrimaryClip(clip)
-        Toast.makeText(baseContext, "Token copied to clipboard", Toast.LENGTH_SHORT).show()
-    }
-
-
-
-
     private fun startServer() {
         binding.configInfoTextView.text = getString(R.string.msg_token_fmt, deviceToken)
         binding.serverButton.text = "Stop Server"
         serviceActive = true
+        copyToClipboard(deviceToken)
     }
 
     private fun stopServer() {
@@ -140,6 +129,13 @@ class MainActivity : AppCompatActivity() {
         binding.configInfoTextView.text = ""
     }
 
+
+    private fun copyToClipboard(text: CharSequence?) {
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("FCM Token", text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(baseContext, "Token copied to clipboard", Toast.LENGTH_SHORT).show()
+    }
 
 
 
