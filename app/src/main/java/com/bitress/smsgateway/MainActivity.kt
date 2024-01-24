@@ -12,6 +12,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bitress.smsgateway.databinding.ActivityMainBinding
 import com.bitress.smsgateway.utils.LogAdapter
 import com.bitress.smsgateway.utils.Logs
+import com.bitress.smsgateway.utils.NotificationHandler
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.innfinity.permissionflow.lib.requestPermissions
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     private var deviceToken = ""
     private lateinit var logAdapter : LogAdapter
     private lateinit var logRecycleView : RecyclerView
+    private lateinit var notificationHandler: NotificationHandler
+
 
 
     private val messageReceiver = object : BroadcastReceiver() {
@@ -86,6 +90,7 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.WAKE_LOCK,
                 Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.POST_NOTIFICATIONS,
                 Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
             ).collect { permissions ->
 
@@ -124,6 +129,23 @@ class MainActivity : AppCompatActivity() {
                 startServer()
             }
         }
+
+
+        var isConfigInfoVisible = true
+
+        binding.showConfigBtn.setOnClickListener {
+            if (!isConfigInfoVisible) {
+                binding.configInfoTextView.visibility = View.GONE
+                binding.showConfigBtn.text = getString(R.string.show_configuration)
+                isConfigInfoVisible = true
+            } else {
+                binding.configInfoTextView.text = getString(R.string.msg_token_fmt, deviceToken)
+                binding.configInfoTextView.visibility = View.VISIBLE
+                binding.showConfigBtn.text = getString(R.string.hide_configuration)
+                isConfigInfoVisible = false
+            }
+        }
+
     }
 
     override fun onDestroy() {
@@ -133,24 +155,26 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun startServer() {
-        binding.configInfoTextView.text = getString(R.string.msg_token_fmt, deviceToken)
-        binding.serverButton.text = "Stop Server"
+        binding.serverButton.text = getString(R.string.stop_server)
         serviceActive = true
         copyToClipboard(deviceToken)
 
         logAdapter.addLog(Logs("SMS gateway server has started", System.currentTimeMillis(), true))
         logAdapter.notifyDataSetChanged()
-
+        notificationHandler = NotificationHandler(this)
+        notificationHandler.showNotification()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun stopServer() {
-        binding.serverButton.text = "Start Server"
+        binding.serverButton.text = getString(R.string.start_server)
         serviceActive = false
-        binding.configInfoTextView.text = ""
         logAdapter.addLog(Logs("SMS gateway server has stopped", System.currentTimeMillis(), true))
         logAdapter.notifyDataSetChanged()
-
+        notificationHandler = NotificationHandler(this)
+        notificationHandler.cancelNotification()
     }
 
 

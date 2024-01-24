@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">SMS Gateway</string>
     <string name="msg_token_fmt"><![CDATA[Device Token: \n\n%s]]></string>
+    <string name="start_server">Start Server</string>
+    <string name="stop_server">Stop Server</string>
+    <string name="show_configuration">Show Configuration</string>
+    <string name="hide_configuration">Hide Configuration</string>
+    <string name="bitress_sms_gateway_is_running">Bitress SMS Gateway is running</string>
+    <string name="gateway_service_is_currently_active">Gateway service is currently active.</string>
 </resources>

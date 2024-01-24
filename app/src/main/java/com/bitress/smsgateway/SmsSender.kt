@@ -13,15 +13,19 @@ class SmsSender(private val logAdapter: LogAdapter, private val isGatewayOnline:
             try {
             val smsManager = SmsManager.getDefault()
             smsManager.sendTextMessage(phoneNumber, null, message, null, null)
-            logAdapter.addLog(Logs("SMS sent successfully", System.currentTimeMillis(), true))
+            logAdapter.addLog(Logs("SMS sent successfully. \n Message: $message", System.currentTimeMillis(), true))
+                logAdapter.notifyDataSetChanged()
         } catch (e: Exception) {
             val errorMessage = "Error sending SMS: ${e.message}"
             logAdapter.addLog(Logs(errorMessage, System.currentTimeMillis(), false))
-            Log.e(TAG, errorMessage)
+                logAdapter.notifyDataSetChanged()
+
+                Log.e(TAG, errorMessage)
         }
     } else {
             Log.d(TAG, "SMS not sent. Gateway is offline.")
             logAdapter.addLog(Logs("SMS not sent. Gateway is offline.", System.currentTimeMillis(), false))
+            logAdapter.notifyDataSetChanged()
 
         }
     }
