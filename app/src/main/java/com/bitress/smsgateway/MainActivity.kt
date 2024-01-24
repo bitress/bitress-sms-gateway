@@ -1,13 +1,19 @@
 package com.bitress.smsgateway
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bitress.smsgateway.databinding.ActivityMainBinding
 import com.google.android.gms.tasks.OnCompleteListener
@@ -21,10 +27,33 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var serviceActive = false
+    private var deviceToken = ""
 
-    private val prefName = "pref"
-    private val isServerOnline = "isServerOnline"
 
+
+    private val messageReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (context == null || intent == null) {
+                Log.e(TAG, "Error: Invalid context or intent.")
+                return
+            }
+
+            val message = intent.getStringExtra("messageBody")
+            val number = intent.getStringExtra("number")
+
+            if (!message.isNullOrBlank()) {
+                Log.e(TAG, message)
+                val smsSender = SmsSender(context)
+                if (number != null) {
+                    smsSender.sendSms(number, message)
+                }
+            }
+        }
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -54,22 +83,20 @@ class MainActivity : AppCompatActivity() {
                         // Get new FCM registration token
                         val token = task.result
 
-                        // Log and toast
-                        val msg = getString(R.string.msg_token_fmt, token)
-                        Log.d(TAG, msg)
-                        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                        deviceToken = token
+                        copyToClipboard(token)
 
-                        binding.configInfoTextView.text = msg
-                        copyToClipboard(msg)
+                        val filter = IntentFilter("com.bitress.MESSAGE_RECEIVED")
+                        registerReceiver(messageReceiver, filter, RECEIVER_NOT_EXPORTED)
+
                     })
                 } else {
                     // Not all permissions are granted, handle accordingly
                     // ...
                 }
             }
+
         }
-
-
 
 
         binding.serverButton.setOnClickListener {
@@ -80,6 +107,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        unregisterReceiver(messageReceiver)
+        super.onDestroy()
+    }
+
 
 
 
@@ -95,34 +128,19 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun startServer() {
-        // Set isServerOnline to true in SharedPreferences
-        setServerStatus(true)
-
-        // Update UI or perform other actions with the secretKey
-        binding.configInfoTextView.text = "Device ID: dsakldjalkd ajkldjald \n Secret Key: to be added"
+        binding.configInfoTextView.text = getString(R.string.msg_token_fmt, deviceToken)
         binding.serverButton.text = "Stop Server"
         serviceActive = true
     }
 
     private fun stopServer() {
-        // Set isServerOnline to false in SharedPreferences
-        setServerStatus(false)
 
         binding.serverButton.text = "Start Server"
         serviceActive = false
         binding.configInfoTextView.text = ""
     }
 
-    private fun setServerStatus(isOnline: Boolean) {
-        val prefs = getSharedPreferences(prefName, Context.MODE_PRIVATE)
-        val editor = prefs.edit()
-        editor.putBoolean(isServerOnline, isOnline)
-        editor.apply()
-    }
 
-    private fun isServerOnline(): Boolean {
-        val prefs = getSharedPreferences(prefName, Context.MODE_PRIVATE)
-        return prefs.getBoolean(isServerOnline, false)
-    }
+
 
 }
