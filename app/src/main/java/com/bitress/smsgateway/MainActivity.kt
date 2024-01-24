@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     private var serviceActive = false
     private var deviceToken = ""
     private lateinit var logAdapter : LogAdapter
+    private lateinit var logRecycleView : RecyclerView
+
 
     private val messageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -46,8 +48,9 @@ class MainActivity : AppCompatActivity() {
 
             if (!message.isNullOrBlank()) {
                 Log.e(TAG, message)
-                val logAdapter = LogAdapter(ArrayList())
+
                 val smsSender = SmsSender(logAdapter, serviceActive)
+
                 if (number != null) {
                     smsSender.sendSms(number, message)
                 }
@@ -56,12 +59,23 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+
     @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        logRecycleView = findViewById(R.id.log_recycle_view)
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.reverseLayout = true
+        logRecycleView.layoutManager = layoutManager
+
+        logAdapter = LogAdapter(ArrayList())
+        logRecycleView.adapter = logAdapter
+
+
 
         CoroutineScope(Dispatchers.Main).launch {
             requestPermissions(
@@ -125,24 +139,18 @@ class MainActivity : AppCompatActivity() {
         serviceActive = true
         copyToClipboard(deviceToken)
 
-        val logRecycleView = findViewById<RecyclerView>(R.id.log_recycle_view)
-        logRecycleView.layoutManager = LinearLayoutManager(this)
+        logAdapter.addLog(Logs("SMS gateway server has started", System.currentTimeMillis(), true))
+        logAdapter.notifyDataSetChanged()
 
-        val logList = ArrayList<Logs>()
-
-        for (i in 1..20) {
-            logList.add(Logs("Item $i", System.currentTimeMillis(), true))
-        }
-
-        logAdapter = LogAdapter(logList)
-
-        logRecycleView.adapter = logAdapter
     }
 
     private fun stopServer() {
         binding.serverButton.text = "Start Server"
         serviceActive = false
         binding.configInfoTextView.text = ""
+        logAdapter.addLog(Logs("SMS gateway server has stopped", System.currentTimeMillis(), true))
+        logAdapter.notifyDataSetChanged()
+
     }
 
 

@@ -3,16 +3,12 @@ package com.bitress.smsgateway.utils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
 import com.bitress.smsgateway.R
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
-class LogAdapter(private val logList: MutableList<Logs>) : RecyclerView.Adapter<LogAdapter.ViewHolder>() {
+class LogAdapter(private val logList: MutableList<Logs>) : Adapter<LogAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -35,13 +31,6 @@ class LogAdapter(private val logList: MutableList<Logs>) : RecyclerView.Adapter<
         logList.add(log)
     }
 
-
-    fun getCurrentTime(): String {
-        val currentTimeMillis = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val currentDate = Date(currentTimeMillis)
-        return dateFormat.format(currentDate)
-    }
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
