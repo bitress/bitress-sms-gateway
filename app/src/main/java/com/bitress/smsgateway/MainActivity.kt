@@ -15,7 +15,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bitress.smsgateway.databinding.ActivityMainBinding
+import com.bitress.smsgateway.utils.LogAdapter
+import com.bitress.smsgateway.utils.Logs
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.innfinity.permissionflow.lib.requestPermissions
@@ -28,8 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var serviceActive = false
     private var deviceToken = ""
-
-
+    private lateinit var logAdapter : LogAdapter
 
     private val messageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -43,7 +46,8 @@ class MainActivity : AppCompatActivity() {
 
             if (!message.isNullOrBlank()) {
                 Log.e(TAG, message)
-                val smsSender = SmsSender()
+                val logAdapter = LogAdapter(ArrayList())
+                val smsSender = SmsSender(logAdapter, serviceActive)
                 if (number != null) {
                     smsSender.sendSms(number, message)
                 }
@@ -120,10 +124,22 @@ class MainActivity : AppCompatActivity() {
         binding.serverButton.text = "Stop Server"
         serviceActive = true
         copyToClipboard(deviceToken)
+
+        val logRecycleView = findViewById<RecyclerView>(R.id.log_recycle_view)
+        logRecycleView.layoutManager = LinearLayoutManager(this)
+
+        val logList = ArrayList<Logs>()
+
+        for (i in 1..20) {
+            logList.add(Logs("Item $i", System.currentTimeMillis(), true))
+        }
+
+        logAdapter = LogAdapter(logList)
+
+        logRecycleView.adapter = logAdapter
     }
 
     private fun stopServer() {
-
         binding.serverButton.text = "Start Server"
         serviceActive = false
         binding.configInfoTextView.text = ""
