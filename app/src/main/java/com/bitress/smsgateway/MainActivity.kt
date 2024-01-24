@@ -3,8 +3,6 @@ package com.bitress.smsgateway
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -13,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -159,8 +156,6 @@ class MainActivity : AppCompatActivity() {
     private fun startServer() {
         binding.serverButton.text = getString(R.string.stop_server)
         serviceActive = true
-        copyToClipboard(deviceToken)
-
         logAdapter.addLog(Logs("SMS gateway server has started", System.currentTimeMillis(), true))
         logAdapter.notifyDataSetChanged()
         notificationHandler = NotificationHandler(this)
@@ -177,13 +172,6 @@ class MainActivity : AppCompatActivity() {
         notificationHandler.cancelNotification()
     }
 
-
-    private fun copyToClipboard(text: CharSequence?) {
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("FCM Token", text)
-        clipboard.setPrimaryClip(clip)
-        Toast.makeText(baseContext, "Token copied to clipboard", Toast.LENGTH_SHORT).show()
-    }
 
 
 
