@@ -7,4 +7,7 @@
     <string name="hide_configuration">Hide Configuration</string>
     <string name="bitress_sms_gateway_is_running">Bitress SMS Gateway is running</string>
     <string name="gateway_service_is_currently_active">Gateway service is currently active.</string>
+    <string name="sms_gateway_server_has_stopped">SMS gateway server has stopped</string>
+    <string name="sms_gateway_server_has_started">SMS gateway server has started</string>
+    <string name="fetching_fcm_registration_token_failed">Fetching FCM registration token failed</string>
 </resources>

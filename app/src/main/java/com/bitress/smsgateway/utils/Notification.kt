@@ -1,5 +1,6 @@
 package com.bitress.smsgateway.utils
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -12,7 +13,11 @@ class NotificationHandler(private val context: Context) {
     private val NOTIFICATION_ID = 1
     private val CHANNEL_ID = "sms_gateway_channel"
 
-    fun showNotification() {
+    @SuppressLint("ObsoleteSdkInt")
+    fun showNotification(context: Context, notificationTitle: String, notificationText: String, isOngoing: Boolean) {
+        val CHANNEL_ID = "Your_Channel_ID"
+        val NOTIFICATION_ID = 1
+
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -26,17 +31,18 @@ class NotificationHandler(private val context: Context) {
             notificationManager.createNotificationChannel(channel)
         }
 
-        // Build the notification
+        // Build the notification`
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle(context.getString(R.string.bitress_sms_gateway_is_running))
-            .setContentText(context.getString(R.string.gateway_service_is_currently_active))
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setOngoing(true)
+            .setContentTitle(notificationTitle)
+            .setContentText(notificationText)
+            .setSmallIcon(R.drawable.bitress_logo)
+            .setOngoing(isOngoing)
             .build()
 
         // Show the notification
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
+
 
     fun cancelNotification() {
         val notificationManager =
