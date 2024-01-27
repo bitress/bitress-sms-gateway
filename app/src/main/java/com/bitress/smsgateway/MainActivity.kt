@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
             if (!message.isNullOrBlank()) {
                 Log.e(TAG, message)
 
-                val smsSender = SmsSender(logAdapter, serviceActive)
+                val smsSender = SmsSender(context,logAdapter, serviceActive, notificationHandler)
 
                 if (number != null) {
                     smsSender.sendSms(number, message)

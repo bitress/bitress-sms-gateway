@@ -15,7 +15,6 @@
         android:background="#231244"
         app:title="Bitress SMS Gateway"
         app:titleTextColor="@android:color/white"
-        app:menu="@menu/bottom_navigation_menu"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
 

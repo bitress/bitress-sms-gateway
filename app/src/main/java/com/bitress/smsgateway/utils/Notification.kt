@@ -15,8 +15,6 @@ class NotificationHandler(private val context: Context) {
 
     @SuppressLint("ObsoleteSdkInt")
     fun showNotification(context: Context, notificationTitle: String, notificationText: String, isOngoing: Boolean) {
-        val CHANNEL_ID = "Your_Channel_ID"
-        val NOTIFICATION_ID = 1
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
