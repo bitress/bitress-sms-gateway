@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_version">v.1.5</string>
     <string name="app_name">Bitress SMS Gateway</string>
     <string name="msg_token_fmt"><![CDATA[Device Token: \n\n%s]]></string>
     <string name="start_server">Start Server</string>

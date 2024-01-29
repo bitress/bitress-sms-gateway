@@ -67,6 +67,16 @@
             android:layout_marginBottom="16dp"
             tools:ignore="TouchTargetSizeCheck" />
 
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/batteryOptimizationSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="@string/disable_battery_optimization"
+            android:minHeight="48dp"
+            android:layout_marginBottom="16dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/saveButton"
             android:layout_width="match_parent"
