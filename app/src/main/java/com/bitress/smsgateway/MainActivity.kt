@@ -106,6 +106,7 @@ class MainActivity : AppCompatActivity() {
                             registerReceiver(messageReceiver, filter, RECEIVER_NOT_EXPORTED)
                         })
                     } else {
+
                         logAdapter.addLog(Logs("Permissions aren't granted! Asking again...", System.currentTimeMillis(), true))
                         logAdapter.notifyDataSetChanged()
                     }
