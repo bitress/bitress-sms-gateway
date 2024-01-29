@@ -10,11 +10,10 @@ import com.bitress.smsgateway.R
 
 class NotificationHandler(private val context: Context) {
 
-    private val NOTIFICATION_ID = 1
-    private val CHANNEL_ID = "sms_gateway_channel"
+
 
     @SuppressLint("ObsoleteSdkInt")
-    fun showNotification(context: Context, notificationTitle: String, notificationText: String, isOngoing: Boolean) {
+    fun showNotification(context: Context, notificationTitle: String, notificationText: String, isOngoing: Boolean, channelID: String, notificationID: Int) {
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -22,15 +21,15 @@ class NotificationHandler(private val context: Context) {
         // Create a notification channel (required for Android Oreo and above)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Sms Gateway Channel",
+                channelID,
+                "SMS Gateway",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             notificationManager.createNotificationChannel(channel)
         }
 
         // Build the notification`
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(context, channelID)
             .setContentTitle(notificationTitle)
             .setContentText(notificationText)
             .setSmallIcon(R.drawable.bitress_logo)
@@ -38,13 +37,13 @@ class NotificationHandler(private val context: Context) {
             .build()
 
         // Show the notification
-        notificationManager.notify(NOTIFICATION_ID, notification)
+        notificationManager.notify(notificationID, notification)
     }
 
 
-    fun cancelNotification() {
+    fun cancelNotification(notificationID: Int) {
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(NOTIFICATION_ID)
+        notificationManager.cancel(notificationID)
     }
 }

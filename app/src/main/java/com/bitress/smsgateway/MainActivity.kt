@@ -112,6 +112,12 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        binding.settingsButton.setOnClickListener {
+            val intent = Intent(this, AppSettings::class.java)
+            intent.putExtra("token", deviceToken)
+            startActivity(intent)
+        }
+
 
         binding.serverButton.setOnClickListener {
             if (serviceActive) {
@@ -122,20 +128,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        var isConfigInfoVisible = true
-
-        binding.showConfigBtn.setOnClickListener {
-            if (!isConfigInfoVisible) {
-                binding.configInfoTextView.visibility = View.GONE
-                binding.showConfigBtn.text = getString(R.string.show_configuration)
-                isConfigInfoVisible = true
-            } else {
-                binding.configInfoTextView.text = getString(R.string.msg_token_fmt, deviceToken)
-                binding.configInfoTextView.visibility = View.VISIBLE
-                binding.showConfigBtn.text = getString(R.string.hide_configuration)
-                isConfigInfoVisible = false
-            }
-        }
 
     }
 
@@ -153,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         logAdapter.addLog(Logs(getString(R.string.sms_gateway_server_has_started), System.currentTimeMillis(), true))
         logAdapter.notifyDataSetChanged()
         notificationHandler = NotificationHandler(this)
-        notificationHandler.showNotification(this, getString(R.string.bitress_sms_gateway_is_running), getString(R.string.gateway_service_is_currently_active), true)
+        notificationHandler.showNotification(this, getString(R.string.bitress_sms_gateway_is_running), getString(R.string.gateway_service_is_currently_active), true,"gateway_init", 1)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -163,7 +155,7 @@ class MainActivity : AppCompatActivity() {
         logAdapter.addLog(Logs(getString(R.string.sms_gateway_server_has_stopped), System.currentTimeMillis(), true))
         logAdapter.notifyDataSetChanged()
         notificationHandler = NotificationHandler(this)
-        notificationHandler.cancelNotification()
+        notificationHandler.cancelNotification(1)
     }
 
 

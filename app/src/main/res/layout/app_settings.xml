@@ -35,112 +35,43 @@
         android:layout_marginTop="16dp"
         android:paddingRight="16dp"
         android:orientation="vertical">
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/settingsSIM1"
+            android:id="@+id/deviceTokenInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true"
-            android:hint="@string/settings_sim1"
+            android:hint="Device Token"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="16dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/settingsSIM1Input"
+                android:id="@+id/deviceTokenInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
+                android:inputType="none"
                 tools:ignore="TextContrastCheck" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
+
+
         <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/settings_sim1_outgoing_messages"
+            android:id="@+id/enableNotificationSwitch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/settings_outgoing_messages_sim1"
-            android:minHeight="48dp"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/settings_sim1_incoming_messages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/settings_incoming_messages_sim1"
-            android:minHeight="48dp"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/settingsSIM2Layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:errorEnabled="true"
-            android:hint="@string/settings_sim_2"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/settingsSIM2InputEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                tools:ignore="TextContrastCheck" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/settings_sim2_outgoing_messages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="@string/settings_outgoing_messages_sim2"
+            android:text="@string/receive_notifications"
             android:minHeight="48dp"
             android:layout_marginBottom="16dp"
             tools:ignore="TouchTargetSizeCheck" />
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/settings_sim2_incoming_messages"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="@string/settings_incoming_messages_sim2"
-            android:minHeight="48dp"
-            android:layout_marginBottom="16dp"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/settingsEncryptionKeyLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:errorEnabled="true"
-            android:hint="@string/encryption_key"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/settingsEncryptionKeyInputEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                tools:ignore="TextContrastCheck" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/settingsEncryptReceivedMessages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="@string/encrypt_received_messages"
-            android:minHeight="48dp"
-            android:layout_marginBottom="16dp"
-            tools:ignore="TouchTargetSizeCheck" />
+            android:text="Save Changes" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

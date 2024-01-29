@@ -16,8 +16,17 @@ class SmsSender(
     private val notificationHandler: NotificationHandler
 ) {
 
+
+
     @SuppressLint("NotifyDataSetChanged")
     fun sendSms(phoneNumber: String, message: String) {
+
+
+
+        val sharedPreferences = context.getSharedPreferences("Settings",Context.MODE_PRIVATE)
+        val receiveNotifications = sharedPreferences.getBoolean("receive_notifications", true)
+
+
         if (isGatewayOnline) {
             try {
                 val smsManager = SmsManager.getDefault()
@@ -26,13 +35,16 @@ class SmsSender(
                 logAdapter.addLog(Logs("SMS sent successfully. \n Message: $message", System.currentTimeMillis(), true))
                 logAdapter.notifyDataSetChanged()
 
-                // Show notification for successful SMS sending
-                notificationHandler.showNotification(
-                    context,
-                    notificationTitle = "SMS Sent",
-                    notificationText = "Message sent successfully to $phoneNumber",
-                    isOngoing = false
-                )
+                if (receiveNotifications) {
+                    notificationHandler.showNotification(
+                        context,
+                        notificationTitle = "SMS Sent",
+                        notificationText = "Message sent successfully to $phoneNumber",
+                        isOngoing = false,
+                        channelID = "sms_api",
+                        notificationID = 2
+                    )
+                }
 
             } catch (e: Exception) {
                 val errorMessage = "Error sending SMS: ${e.message}"
@@ -41,26 +53,36 @@ class SmsSender(
 
                 Log.e(TAG, errorMessage)
 
-                // Show notification for SMS sending failure
-                notificationHandler.showNotification(
-                    context,
-                    notificationTitle = "SMS Sending Error",
-                    notificationText = errorMessage,
-                    isOngoing = false
-                )
+                if (receiveNotifications) {
+                    notificationHandler.showNotification(
+                        context,
+                        notificationTitle = "SMS Sending Error",
+                        notificationText = errorMessage,
+                        isOngoing = false,
+                        channelID = "sms_api",
+                        notificationID = 2
+                    )
+                }
+
+
             }
         } else {
             Log.d(TAG, "SMS not sent. Gateway is offline.")
             logAdapter.addLog(Logs("SMS not sent. Gateway is offline.", System.currentTimeMillis(), false))
             logAdapter.notifyDataSetChanged()
 
-            // Show notification for SMS not sent due to offline gateway
-            notificationHandler.showNotification(
-                context,
-                notificationTitle = "SMS Not Sent",
-                notificationText = "Gateway is offline. Message not sent.",
-                isOngoing = false
-            )
+            if (receiveNotifications) {
+                notificationHandler.showNotification(
+                    context,
+                    notificationTitle = "SMS Not Sent",
+                    notificationText = "Gateway is offline. Message not sent.",
+                    isOngoing = false,
+                    channelID = "sms_api",
+                    notificationID = 2
+                )
+            }
+
+
         }
     }
 }
