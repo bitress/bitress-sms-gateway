@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
             if (!message.isNullOrBlank()) {
                 Log.e(TAG, message)
 
-                val smsSender = SmsSender(logAdapter, serviceActive)
+                val smsSender = SmsSender(context,logAdapter, serviceActive, notificationHandler)
 
                 if (number != null) {
                     smsSender.sendSms(number, message)
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,11 +72,8 @@ class MainActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         layoutManager.reverseLayout = true
         logRecycleView.layoutManager = layoutManager
-
         logAdapter = LogAdapter(ArrayList())
         logRecycleView.adapter = logAdapter
-
-
 
         CoroutineScope(Dispatchers.Main).launch {
             requestPermissions(
@@ -96,26 +93,29 @@ class MainActivity : AppCompatActivity() {
                 if (allGranted) {
                     FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                         if (!task.isSuccessful) {
-                            Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                            Log.w(TAG,
+                                getString(R.string.fetching_fcm_registration_token_failed), task.exception)
                             return@OnCompleteListener
                         }
 
                         // Get new FCM registration token
                         val token = task.result
-
                         deviceToken = token
-
-
                         val filter = IntentFilter("com.bitress.MESSAGE_RECEIVED")
                         registerReceiver(messageReceiver, filter, RECEIVER_NOT_EXPORTED)
-
                     })
                 } else {
-                    // Not all permissions are granted, handle accordingly
-                    // ...
+                    logAdapter.addLog(Logs("Permissions arent granted!", System.currentTimeMillis(), true))
+                    logAdapter.notifyDataSetChanged()
                 }
             }
 
+        }
+
+        binding.settingsButton.setOnClickListener {
+            val intent = Intent(this, AppSettings::class.java)
+            intent.putExtra("token", deviceToken)
+            startActivity(intent)
         }
 
 
@@ -128,20 +128,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        var isConfigInfoVisible = true
-
-        binding.showConfigBtn.setOnClickListener {
-            if (!isConfigInfoVisible) {
-                binding.configInfoTextView.visibility = View.GONE
-                binding.showConfigBtn.text = getString(R.string.show_configuration)
-                isConfigInfoVisible = true
-            } else {
-                binding.configInfoTextView.text = getString(R.string.msg_token_fmt, deviceToken)
-                binding.configInfoTextView.visibility = View.VISIBLE
-                binding.showConfigBtn.text = getString(R.string.hide_configuration)
-                isConfigInfoVisible = false
-            }
-        }
 
     }
 
@@ -156,23 +142,21 @@ class MainActivity : AppCompatActivity() {
     private fun startServer() {
         binding.serverButton.text = getString(R.string.stop_server)
         serviceActive = true
-        logAdapter.addLog(Logs("SMS gateway server has started", System.currentTimeMillis(), true))
+        logAdapter.addLog(Logs(getString(R.string.sms_gateway_server_has_started), System.currentTimeMillis(), true))
         logAdapter.notifyDataSetChanged()
         notificationHandler = NotificationHandler(this)
-        notificationHandler.showNotification()
+        notificationHandler.showNotification(this, getString(R.string.bitress_sms_gateway_is_running), getString(R.string.gateway_service_is_currently_active), true,"gateway_init", 1)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun stopServer() {
         binding.serverButton.text = getString(R.string.start_server)
         serviceActive = false
-        logAdapter.addLog(Logs("SMS gateway server has stopped", System.currentTimeMillis(), true))
+        logAdapter.addLog(Logs(getString(R.string.sms_gateway_server_has_stopped), System.currentTimeMillis(), true))
         logAdapter.notifyDataSetChanged()
         notificationHandler = NotificationHandler(this)
-        notificationHandler.cancelNotification()
+        notificationHandler.cancelNotification(1)
     }
-
-
 
 
 }

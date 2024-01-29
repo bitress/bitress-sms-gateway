@@ -4,27 +4,23 @@ plugins {
     id("com.google.gms.google-services")
 }
 
-
-
 android {
     namespace = "com.bitress.smsgateway"
     compileSdk = 34
-
-
 
     defaultConfig {
         applicationId = "com.bitress.smsgateway"
         minSdk = 28
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -48,7 +44,7 @@ android {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.google.firebase:firebase-messaging-directboot:20.2.0")
+    implementation("com.google.firebase:firebase-messaging-directboot:23.4.0")
     implementation("io.objectbox:objectbox-gradle-plugin:3.7.1")
 
     implementation("com.robertlevonyan.components:PermissionsFlow:1.2.7")
