@@ -36,6 +36,14 @@
         android:paddingRight="16dp"
         android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gateway Settings"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/deviceTokenInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -55,7 +63,14 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Event Settings"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/enableNotificationSwitch"
@@ -66,6 +81,7 @@
             android:minHeight="48dp"
             android:layout_marginBottom="16dp"
             tools:ignore="TouchTargetSizeCheck" />
+
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/batteryOptimizationSwitch"
