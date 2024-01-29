@@ -93,11 +93,6 @@
             android:layout_marginBottom="16dp"
             tools:ignore="TouchTargetSizeCheck" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/saveButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save Changes" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

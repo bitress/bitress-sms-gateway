@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private val messageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+
             if (context == null || intent == null) {
                 Log.e(TAG, "Error: Invalid context or intent.")
                 return
@@ -51,15 +52,12 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG, message)
 
                 val smsSender = SmsSender(context,logAdapter, serviceActive, notificationHandler)
-
                 if (number != null) {
                     smsSender.sendSms(number, message)
                 }
             }
         }
     }
-
-
 
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -137,8 +135,6 @@ class MainActivity : AppCompatActivity() {
         unregisterReceiver(messageReceiver)
         super.onDestroy()
     }
-
-
 
     @SuppressLint("NotifyDataSetChanged")
     private fun startServer() {
