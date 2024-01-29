@@ -76,40 +76,42 @@ class MainActivity : AppCompatActivity() {
         logRecycleView.adapter = logAdapter
 
         CoroutineScope(Dispatchers.Main).launch {
-            requestPermissions(
-                Manifest.permission.RECEIVE_BOOT_COMPLETED,
-                Manifest.permission.GET_ACCOUNTS,
-                Manifest.permission.SEND_SMS,
-                Manifest.permission.RECEIVE_SMS,
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.WAKE_LOCK,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.POST_NOTIFICATIONS,
-                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-            ).collect { permissions ->
+            var permissionsGranted = false
 
-                // Alternatively, you can check if all permissions are granted
-                val allGranted = permissions.all { it.isGranted }
-                if (allGranted) {
-                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-                        if (!task.isSuccessful) {
-                            Log.w(TAG,
-                                getString(R.string.fetching_fcm_registration_token_failed), task.exception)
-                            return@OnCompleteListener
-                        }
+            while (!permissionsGranted) {
+                requestPermissions(
+                    Manifest.permission.RECEIVE_BOOT_COMPLETED,
+                    Manifest.permission.GET_ACCOUNTS,
+                    Manifest.permission.SEND_SMS,
+                    Manifest.permission.RECEIVE_SMS,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.WAKE_LOCK,
+                    Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                ).collect { permissions ->
 
-                        // Get new FCM registration token
-                        val token = task.result
-                        deviceToken = token
-                        val filter = IntentFilter("com.bitress.MESSAGE_RECEIVED")
-                        registerReceiver(messageReceiver, filter, RECEIVER_NOT_EXPORTED)
-                    })
-                } else {
-                    logAdapter.addLog(Logs("Permissions arent granted!", System.currentTimeMillis(), true))
-                    logAdapter.notifyDataSetChanged()
+                    permissionsGranted = permissions.all { it.isGranted }
+
+                    if (permissionsGranted) {
+                        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                            if (!task.isSuccessful) {
+                                Log.w(TAG, getString(R.string.fetching_fcm_registration_token_failed), task.exception)
+                                return@OnCompleteListener
+                            }
+
+                            // Get new FCM registration token
+                            val token = task.result
+                            deviceToken = token
+                            val filter = IntentFilter("com.bitress.MESSAGE_RECEIVED")
+                            registerReceiver(messageReceiver, filter, RECEIVER_NOT_EXPORTED)
+                        })
+                    } else {
+                        logAdapter.addLog(Logs("Permissions aren't granted! Asking again...", System.currentTimeMillis(), true))
+                        logAdapter.notifyDataSetChanged()
+                    }
                 }
             }
-
         }
 
         binding.settingsButton.setOnClickListener {
