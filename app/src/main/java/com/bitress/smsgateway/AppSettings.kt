@@ -44,18 +44,6 @@ class AppSettings : AppCompatActivity() {
         batteryOptimizationSwitch.isChecked =
             sharedPreferences.getBoolean("disable_battery_optimization", false)
 
-        batteryOptimizationSwitch.setOnCheckedChangeListener { _, isChecked ->
-            with(sharedPreferences.edit()) {
-                putBoolean("disable_battery_optimization", isChecked)
-                apply()
-            }
-
-            if (isChecked) {
-                disableBatteryOptimization()
-            } else {
-                enableBatteryOptimization()
-            }
-        }
 
         enableNotificationSwitch.isChecked =
             sharedPreferences.getBoolean("receive_notifications", true)
@@ -65,6 +53,20 @@ class AppSettings : AppCompatActivity() {
                 putBoolean("receive_notifications", enableNotificationSwitch.isChecked)
                 apply()
             }
+
+            val batteryOptimizationStatus = batteryOptimizationSwitch.isChecked
+
+            with(sharedPreferences.edit()) {
+                putBoolean("disable_battery_optimization",batteryOptimizationStatus)
+                apply()
+            }
+
+            if (batteryOptimizationStatus) {
+                disableBatteryOptimization()
+            } else {
+                enableBatteryOptimization()
+            }
+
         }
     }
 

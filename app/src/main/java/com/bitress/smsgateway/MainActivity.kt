@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var logRecycleView : RecyclerView
     private lateinit var notificationHandler: NotificationHandler
 
+    private val PREFS_NAME = "BITRESS_GATEWAY"
+    private val SERVER_STATUS_KEY = "server_status"
 
 
     private val messageReceiver = object : BroadcastReceiver() {
@@ -73,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         logAdapter = LogAdapter(ArrayList())
         logRecycleView.adapter = logAdapter
 
+
         CoroutineScope(Dispatchers.Main).launch {
             var permissionsGranted = false
 
@@ -102,6 +105,14 @@ class MainActivity : AppCompatActivity() {
                             deviceToken = token
                             val filter = IntentFilter("com.bitress.MESSAGE_RECEIVED")
                             registerReceiver(messageReceiver, filter, RECEIVER_NOT_EXPORTED)
+
+                            serviceActive = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                                .getBoolean(SERVER_STATUS_KEY, false)
+
+                            if (serviceActive) {
+                                startServer()
+                            }
+
                         })
                     } else {
 
@@ -142,8 +153,13 @@ class MainActivity : AppCompatActivity() {
         serviceActive = true
         logAdapter.addLog(Logs(getString(R.string.sms_gateway_server_has_started), System.currentTimeMillis(), true))
         logAdapter.notifyDataSetChanged()
-        notificationHandler = NotificationHandler(this)
-        notificationHandler.showNotification(this, getString(R.string.bitress_sms_gateway_is_running), getString(R.string.gateway_service_is_currently_active), true,"gateway_init", 1)
+
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(SERVER_STATUS_KEY, true)
+            .apply()
+
+        startForegroundService(Intent(this, NotificationService::class.java))
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -152,8 +168,16 @@ class MainActivity : AppCompatActivity() {
         serviceActive = false
         logAdapter.addLog(Logs(getString(R.string.sms_gateway_server_has_stopped), System.currentTimeMillis(), true))
         logAdapter.notifyDataSetChanged()
-        notificationHandler = NotificationHandler(this)
-        notificationHandler.cancelNotification(1)
+
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(SERVER_STATUS_KEY, false)
+            .apply()
+
+
+
+        stopService(Intent(this, NotificationService::class.java))
+
     }
 
 
