@@ -10,7 +10,6 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -75,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         logAdapter = LogAdapter(ArrayList())
         logRecycleView.adapter = logAdapter
 
+        notificationHandler = NotificationHandler(this)
 
         CoroutineScope(Dispatchers.Main).launch {
             var permissionsGranted = false

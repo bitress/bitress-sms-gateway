@@ -45,7 +45,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging-directboot:23.4.0")
-    implementation("io.objectbox:objectbox-gradle-plugin:3.7.1")
 
     implementation("com.robertlevonyan.components:PermissionsFlow:1.2.7")
 
