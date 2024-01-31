@@ -27,12 +27,13 @@ class SmsSender(
         // Notification constants
         const val NOTIFICATION_CHANNEL_ID = "sms_api"
         const val NOTIFICATION_ID_SMS_SENT = 2
+        var resultCode: Int = 0;
     }
 
     private val sentReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == SMS_SENT_ACTION) {
-                val resultCode = resultCode
+                 resultCode = resultCode
                 handleSmsResult(resultCode)
             }
         }
@@ -50,13 +51,18 @@ class SmsSender(
 
 
     private fun handleSmsResult(resultCode: Int) {
-        if (resultCode == Activity.RESULT_OK) {
-            logSuccess("SMS sent successfully")
-            unregisterReceiver()
-        } else {
-            logError("Error sending SMS. Result code: $resultCode")
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                logSuccess("SMS sent successfully")
+                unregisterReceiver()
+            }
+            SmsManager.RESULT_ERROR_GENERIC_FAILURE -> logError("Generic failure sending SMS")
+            SmsManager.RESULT_ERROR_RADIO_OFF -> logError("Radio off failure sending SMS")
+            // Handle other error codes as needed
+            else -> logError("Error sending SMS. Result code: $resultCode")
         }
     }
+
 
 
     @SuppressLint("NotifyDataSetChanged")
@@ -68,8 +74,6 @@ class SmsSender(
             try {
                 val sentIntent = PendingIntent.getBroadcast(context, 0, Intent(SMS_SENT_ACTION), 0)
                 sendSmsWithIntent(phoneNumber, message, sentIntent)
-
-                logSuccess("SMS sent successfully. \n Message: $message")
 
                 if (receiveNotifications) {
                     notificationHandler.showNotification(
